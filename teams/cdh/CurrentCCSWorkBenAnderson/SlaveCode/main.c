@@ -12,7 +12,7 @@ int main(void)
                                                 // to activate previously configured port settings
         P1DIR |= BIT0;                          // Set P1.0 to output direction
 
-        P1DIR |= BIT1;
+        P1DIR |= BIT1;  // Howdy
 
 
         for(;;) {
