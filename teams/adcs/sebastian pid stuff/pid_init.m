@@ -10,6 +10,6 @@ motor_shaft_inertia = 6.9 * 10^-8; % kg * m^2
 motor_torque_constant = .00356; % Nm/A
 motor_dynamic_friction_torque = 3.42E-7; %Nm/min
 
-Kp = 0.00564134958887913;
-Ki = 0.0920866669876409;
-Kd = 3.19758992498617e-05;
+Kp = 0.0314554077959018;
+Ki = 3.51141025884711;
+Kd = -1.8313886415732e-05;
