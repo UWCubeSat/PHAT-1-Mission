@@ -8,6 +8,10 @@ int buttonPressed = false;
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 200;
 
+//test diff for merge on git
+int x =1;
+
+
 // PatternGenerator variables
 unsigned long pattern;
 unsigned long timeShiftPrev;
