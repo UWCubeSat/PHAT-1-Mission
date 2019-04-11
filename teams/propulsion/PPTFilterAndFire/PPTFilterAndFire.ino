@@ -5,12 +5,9 @@ int signalPin = 2;
 int lastButtonState = LOW;
 int buttonState;
 int buttonPressed = false;
+float voltage;
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 200;
-
-//test diff for merge on git
-int x =1;
-
 
 // PatternGenerator variables
 unsigned long pattern;
@@ -19,27 +16,44 @@ byte shiftCount = 0, signalSelect;
 
 // charge and fire ppt variables and constants
 int firePin = 5;
+int commandPin = 6;
 int feedbackPin = 7;
 int chargePin = 8;
+
 // Not sure about min voltage, chose 1
-int minVoltage = 1;
+float minVoltageThreshold = 1.973;
+float maxVoltageThreshold = 2.467;
 // Put in dummy values for r1 and r2 because I wasn't sure about them
-int r1 = 300;
-int r2 = 500;
-boolean readyToFire;
+boolean fireCommand;
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(signalPin, INPUT);
   pinMode(firePin, OUTPUT);
   pinMode(chargePin, OUTPUT);
+  pinMode(commandPin, OUTPUT);
+  //set fire command initially to false
+  fireCommand=false;
+  voltage = 0.0;
 }
-
+/* The main computer gives a fireCommand (high/low). This code does nothing
+ *  until the main computer gives the command to fire. Once this happens, it 
+ *  begins to charge the main capacitor for 4 seconds, reads the value, and 
+ *  continues to charge until max threshold is met. It will fire than than
+ *  measure the voltage. If it's 0 than it was a successfull fire.
+ * 
+ */
 void loop() {
   // put your main code here, to run repeatedly:
   //patternGenerator(); 
   //charge and fire code in here:
+  while(fireCommand){
+     chargeToMax();
+     digitalWrite(firePin, HIGH); //firePPT
+     digitalWrite(firePin, LOW);
+     measureVoltage();  //refresh voltage post fire
+  }
   debouncingInput();
 }
 
@@ -66,28 +80,37 @@ void debouncingInput(){
   }
 }
 
-// Checks if PPT is ready to fire by checking feedback circuit, and fires
-// if ready, charges otherwise
-// Question : Is the PPT done firing after it writes a high to the firePin or does it 
-// need to be a constant high? Is there ever a point where the ppt needs to be done firing
-// and doing nothing? 
-void chargeAndFirePPT(){
-  // Did I use the voltage divider formula correctly?
-  int voltageDividerVal = digitalRead(feedbackPin) * (r2 / (r1 + r2));
-  if(voltageDividerVal <= minVoltage){
-    readyToFire = false;
-  }
-  else{
-    readyToFire = true;
-  }
+/*  Measure the voltage of the main capacitor over the voltage divider 
+ *   through analog input 0.
+ *   0.329 V = 100 V
+ *         ...
+ *   1.645 V = 500 V
+ *         ...
+ *   2.467 V = 750 V
+ */
+void measureVoltage(){
+  // read the input on analog pin 0:
+  int sensorValue = analogRead(A0);
+  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
+  voltage = sensorValue * (5.0 / 1023.0);
+  // print out the value you read:
+  Serial.println(voltage);
+  
+}
 
-  if(readyToFire){
-    digitalWrite(firePin, HIGH);
-  }
-  else{
-    digitalWrite(chargePin, HIGH);
+
+/* Charge the circuit for four seconds than measure until 
+ *  max voltage threshold is reached. * 
+ */
+void chargeToMax(){
+  while(voltage <= maxVoltageThreshold){
+    digitalWrite(chargePin, HIGH); //begin charging
+    delay(4000); //delay for four seconds
+    digitalWrite(chargePin, LOW); //stop charging
+    measureVoltage(); //refresh voltage
   }
 }
+
 
 // Creates a signal with some noise, you can ignore this code, it was 
 // meant for testing
