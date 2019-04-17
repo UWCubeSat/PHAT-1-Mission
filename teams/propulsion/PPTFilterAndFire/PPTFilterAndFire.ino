@@ -17,8 +17,11 @@ byte shiftCount = 0, signalSelect;
 // charge and fire ppt variables and constants
 int firePin = 5;
 int commandPin = 6;
-int feedbackPin = 7;
 int chargePin = 8;
+
+//reading analog, voltage (from feedback)
+int feedbackPin = A0;
+int groundReferencePin = A2;
 
 // Not sure about min voltage, chose 1
 float minVoltageThreshold = 1.973;
@@ -30,6 +33,8 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   pinMode(signalPin, INPUT);
+  pinMode(feedbackPin, INPUT);
+  pinMode(groundReferencePin, INPUT);
   pinMode(firePin, OUTPUT);
   pinMode(chargePin, OUTPUT);
   pinMode(commandPin, OUTPUT);
@@ -61,7 +66,7 @@ void loop() {
 // which would then reveal that it isn't noise
 void debouncingInput(){
   if(buttonPressed){
-    chargeAndFirePPT();
+    //chargeAndFirePPT();
   }
   else{
     int reading = digitalRead(signalPin);
@@ -90,9 +95,9 @@ void debouncingInput(){
  */
 void measureVoltage(){
   // read the input on analog pin 0:
-  int sensorValue = analogRead(A0);
+  int sensorValue = analogRead(feedbackPin) - analogRead(groundReferencePin);
   // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
-  voltage = sensorValue * (5.0 / 1023.0);
+  double voltage = sensorValue * (5.0 / 1023.0);
   // print out the value you read:
   Serial.println(voltage);
   
