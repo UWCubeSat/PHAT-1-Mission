@@ -1,14 +1,6 @@
 #include <SD.h>
 #include <SPI.h>
 
-// Writing to SD Card Variables & Constants
-int chipSelect = 10;
-
-void setup(){
-  if (!SD.begin(chipSelect)) {
-    //Serial.println("Card failed, or not present");
-  }
-}
 
 void writingTempDataToSD(){
   String dataString = "("; 
