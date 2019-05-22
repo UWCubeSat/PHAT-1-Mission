@@ -54,6 +54,7 @@ boolean PPTJustStartedFiring = true;
 
 
 void setup() {
+  Serial.begin(9600);
   pinMode(signalPin, OUTPUT);
   pinMode(readPin, INPUT);
   pinMode(feedbackPin, INPUT);
@@ -77,33 +78,33 @@ void loop() {
   ///////////////////////////////  
   
   if(millis() > 0){
-    //debouncingInput();
+    debouncingInput();
   }
   
-  if(millis() > 0 && signalState){
-    chargeAndFirePPT();
-  }
+  //if(millis() > 0 && signalState){
+  //  chargeAndFirePPT();
+  //}
 
   // As soon as the PPT starts firing (signalState == HIGH) and a
   // plasma stream is created, the probe arm should extend and 
   // start taking temperatures and writing to the SD card.
-  if(millis() > 0 && signalState){
-    if(PPTJustStartedFiring){
-      extend();
-      PPTJustStartedFiring = false;
-    }
-    if(PPTFiringNow){
-      writingTempDataToSD();
-    }
-  }
-  if(signalState == LOW){
-    PPTJustStartedFiring = true;
+  //if(millis() > 0 && signalState){
+  //  if(PPTJustStartedFiring){
+  //    extend();
+  //    PPTJustStartedFiring = false;
+  //  }
+  //  if(PPTFiringNow){
+  //    writingTempDataToSD();
+  //  }
+  //}
+  //if(signalState == LOW){
+  //  PPTJustStartedFiring = true;
     // This temporary variable is needed so that the PPT fires right away the 
     // first time it starts firing in its charge-fire cycle (instead of putting
     // a space interval at the beggining)
-    tempFireSpacingInterval = 0;
-    retract();
-  }
+  //  tempFireSpacingInterval = 0;
+  //  retract();
+  //}
 }
   
 void chargeAndFirePPT(){
@@ -188,7 +189,7 @@ void debouncingInput(){
     }
   }
   lastSignalState = reading;
-  //Serial.println(signalState);
+  Serial.println(signalState);
 }
 
 
