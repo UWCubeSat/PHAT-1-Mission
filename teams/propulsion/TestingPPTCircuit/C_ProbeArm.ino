@@ -1,13 +1,9 @@
-#include <Stepper.h>
-
-
-
 boolean PPTJustStartedFiring = true;
 
-void extend() {
+void extend(){
   s.step(100*reduction_ratio);
 }
 
-void retract() {
+void retract(){
   s.step(-100*reduction_ratio);
 }

@@ -2,8 +2,8 @@
 //  pinMode(signalPin, OUTPUT);
 //  pinMode(readPin, INPUT);
 //}
-//
-//// Filtering Signal Variables & Constants
+
+// Filtering Signal Variables & Constants
 //int lastSignalState = LOW;
 //int signalState = LOW;
 //
